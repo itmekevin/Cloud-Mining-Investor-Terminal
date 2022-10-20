@@ -46,7 +46,7 @@ constructor () {
 
     function USDTcollectProfit() public {
         address investor = msg.sender;
-        require(invest_USDT[investor] > 0, "no investment to collect rewards on");
+        require(invest_USDT[investor] > 0, "no investment to collect rewards for");
         dailyRateCalcUSDT(investor);
         timeofInvest_USDT[investor] = block.timestamp;
         fundsUSDT -= investmentRewardsUSDT[investor];
