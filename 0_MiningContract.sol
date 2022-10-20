@@ -36,7 +36,7 @@ contract DinelliMining is USDT_Stuff {
     function ETHcompound() public {
         address investor = msg.sender;
         require(invest_ETH[investor] > 0, "no investments to compound");
-        require(investedfundsETH <= maxValueETH);
+        require(investedfundsETH <= maxValueETH, "amount being compounded too high");
         dailyRateCalcETH(investor);
         timeofInvest_ETH[investor] = block.number;
         invest_ETH[investor] += investmentRewards_ETH[investor];
