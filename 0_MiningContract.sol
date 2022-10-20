@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.12;
 
-import "contracts/USDT_Stuff.sol";
+import "contracts/1_USDT.sol";
 
 
 /*
