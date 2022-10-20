@@ -16,7 +16,6 @@ contract USDC_Stuff is AdminStatus, BTC_Oracle_Test {
     uint256 public maxValueStables = 50000000000;
     uint256 public fundsUSDC = 0;
     uint256 public investedFundsUSDC = 0;
-    uint256 public timeIn_USDC = 0;
 
     mapping(address => uint256) public invest_USDC;
     mapping(address => uint256) public timeofInvest_USDC;
@@ -43,7 +42,6 @@ constructor () {
         address investor = msg.sender;
         require(invest_USDC[investor] > 0);
         require(investedFundsUSDC <= maxValueStables);
-        timeIn_USDC = block.number - timeofInvest_USDC[investor];
         dailyRateCalcUSDC(investor);
         timeofInvest_USDC[investor] = block.number;
         invest_USDC[investor] += investmentRewardsUSDC[investor];
@@ -53,17 +51,16 @@ constructor () {
     function USDCcollectProfit() public {
         address investor = msg.sender;
         require(invest_USDC[investor] > 0);
-        timeIn_USDC = block.number - timeofInvest_USDC[investor];
         dailyRateCalcUSDC(investor);
         timeofInvest_USDC[investor] = block.number;
         fundsUSDC -= investmentRewardsUSDC[investor];
         USDC.transfer(investor, investmentRewardsUSDC[investor]);
     }
 
-// CALCULATE THE DAILY RATE HERE, THEN MULTIPLY IT BY DAYS INVESTED (timeIn_USDC / blocks per day)
+// CALCULATE THE DAILY RATE HERE, THEN MULTIPLY IT BY DAYS INVESTED
     function dailyRateCalcUSDC(address investor) internal {
         uint256 dailyRate = uint256((((constant1_Stables*(uint(getLatestPriceBTC())))-constant2_Stables)*invest_USDC[investor])/10000000000000000000);
-        investmentRewardsUSDC[investor] = dailyRate * (timeIn_USDC/6375);
+        investmentRewardsUSDC[investor] = dailyRate * ((block.number - timeofInvest_USDC[investor])/6375);
     }
 
 // SET CONSTANTS FOR dailyRateCalcUSDC
