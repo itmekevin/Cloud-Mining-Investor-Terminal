@@ -11,7 +11,6 @@ INTENDED USAGE: This contract allows individuals to invest into a company and re
 contract USDT_Stuff is USDC_Stuff {
 
     uint256 public fundsUSDT = 0;
-    uint256 public timeIn_USDT = 0;
     uint256 public investedFundsUSDT = 0;
 
     mapping(address => uint256) public invest_USDT;
@@ -39,7 +38,6 @@ constructor () {
         address investor = msg.sender;
         require(invest_USDT[investor] > 0);
         require(investedFundsUSDT <= maxValueStables);
-        timeIn_USDT = block.timestamp - timeofInvest_USDT[investor];
         dailyRateCalcUSDT(investor);
         timeofInvest_USDT[investor] = block.timestamp;
         invest_USDT[investor] += investmentRewardsUSDT[investor];
@@ -49,7 +47,6 @@ constructor () {
     function USDTcollectProfit() public {
         address investor = msg.sender;
         require(invest_USDT[investor] > 0);
-        timeIn_USDT = block.timestamp - timeofInvest_USDT[investor];
         dailyRateCalcUSDT(investor);
         timeofInvest_USDT[investor] = block.timestamp;
         fundsUSDT -= investmentRewardsUSDT[investor];
@@ -59,7 +56,7 @@ constructor () {
 // CALCULATE THE DAILY RATE HERE, THEN MULTIPLY IT BY DAYS INVESTED
     function dailyRateCalcUSDT(address investor) internal {
         uint256 dailyRate = uint256((((constant1_Stables*(uint(getLatestPriceBTC())))-constant2_Stables)*invest_USDT[investor])/10000000000000000000);
-        investmentRewardsUSDT[investor] = dailyRate * (timeIn_USDT/6375);
+        investmentRewardsUSDT[investor] = dailyRate * ((block.timestamp - timeofInvest_USDT[investor])/6375);
     }
 
 // FUNCTIONS TO ALLOW OWNERSHIP TO ADD AND REMOVE FUNDS FROM THE CONTRACT BALANCE
