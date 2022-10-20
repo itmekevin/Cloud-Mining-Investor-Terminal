@@ -70,8 +70,8 @@ contract DinelliMining is USDT_Stuff {
 
 // THE FOLLOWING FUNCTIONS ARE FOR OWNERSHIP TO ADD AND REMOVE fundsETH FROM THE CONTRACT BALANCE
 
-    function addLiquidityETH(uint256 liquidETH) public payable onlyAdmin {
-        fundsETH += liquidETH;
+    function addLiquidityETH() public payable onlyAdmin {
+        fundsETH += msg.value;
     }
 
     function takefundsETH(address payable treasury, uint256 liquidETH) public onlyAdmin{
