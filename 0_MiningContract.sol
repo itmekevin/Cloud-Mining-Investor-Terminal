@@ -26,7 +26,7 @@ contract DinelliMining is USDT_Stuff {
     function ETHinvest() public payable {
         address investor = msg.sender;
         uint256 investment = msg.value;
-        require ((investedfundsETH + investment) < maxValueETH);
+        require ((investedfundsETH + investment) < maxValueETH, "amount too high");
         fundsETH += investment;
         investedfundsETH += investment;
         invest_ETH[investor] += investment;
@@ -35,7 +35,7 @@ contract DinelliMining is USDT_Stuff {
 
     function ETHcompound() public {
         address investor = msg.sender;
-        require(invest_ETH[investor] > 0);
+        require(invest_ETH[investor] > 0, "no investments to compound");
         require(investedfundsETH <= maxValueETH);
         dailyRateCalcETH(investor);
         timeofInvest_ETH[investor] = block.number;
@@ -45,7 +45,7 @@ contract DinelliMining is USDT_Stuff {
 
     function ETHcollectProfit() public {
         address investor = msg.sender;
-        require (invest_ETH[investor] > 0);
+        require (invest_ETH[investor] > 0, "no investments to collect profits for");
         dailyRateCalcETH(investor);
         timeofInvest_ETH[investor] = block.number;
         fundsETH -= investmentRewards_ETH[investor];
