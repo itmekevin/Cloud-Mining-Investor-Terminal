@@ -15,7 +15,6 @@ contract DinelliMining is USDT_Stuff {
     uint256 public constant2_ETH = 957600000000000000000000;
     uint256 public fundsETH = 0;
     uint256 public investedfundsETH = 0;
-    uint256 public timeIn_ETH = 0;
 
     mapping(address => uint256) public invest_ETH;
     mapping(address => uint256) public timeofInvest_ETH;
@@ -37,7 +36,6 @@ contract DinelliMining is USDT_Stuff {
         address investor = msg.sender;
         require(invest_ETH[investor] > 0);
         require(investedfundsETH <= maxValueETH);
-        timeIn_ETH = block.number - timeofInvest_ETH[investor];
         dailyRateCalcETH(investor);
         timeofInvest_ETH[investor] = block.number;
         invest_ETH[investor] += investmentRewards_ETH[investor];
@@ -47,7 +45,6 @@ contract DinelliMining is USDT_Stuff {
     function ETHcollectProfit() public {
         address investor = msg.sender;
         require (invest_ETH[investor] > 0);
-        timeIn_ETH = block.number - timeofInvest_ETH[investor];
         dailyRateCalcETH(investor);
         timeofInvest_ETH[investor] = block.number;
         fundsETH -= investmentRewards_ETH[investor];
@@ -58,7 +55,7 @@ contract DinelliMining is USDT_Stuff {
 
     function dailyRateCalcETH(address investor) internal {
         uint256 dailyRate = uint256(((int(constant1_ETH)*((getLatestPriceBTC()/getLatestPriceETH())*int(1000000000000000000)))-int(constant2_ETH))*int(invest_ETH[investor])/int(1000000000000000000000000000));
-        investmentRewards_ETH[investor] = dailyRate * (timeIn_ETH/6375);
+        investmentRewards_ETH[investor] = dailyRate * ((block.number - timeofInvest_ETH[investor])/6375);
     }
 
 // SET CONSTANTS FOR dailyRateCalc
