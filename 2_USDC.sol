@@ -28,7 +28,7 @@ constructor () {
     }
 
 // INVESTING LOGIC FLOW
-    function USDCInvest(uint256 investment) public payable {
+    function USDCInvest(uint256 investment) public {
         require (investedFundsUSDC + investment <= maxValueStables);
         address investor = msg.sender;
         fundsUSDC += investment;
