@@ -23,8 +23,9 @@ contract DinelliMining is USDT_Stuff {
 
 // INVEST FUNCTION ALLOWS FOR THE DEPOSIT OF fundsETH AND THE WITHDRAWAL OF PROFITS AT SOME TIME INTERVAL
 
-    function ETHinvest(uint256 investment) public payable {
+    function ETHinvest() public payable {
         address investor = msg.sender;
+        uint256 investment = msg.value;
         require ((investedfundsETH + investment) < maxValueETH);
         fundsETH += investment;
         investedfundsETH += investment;
