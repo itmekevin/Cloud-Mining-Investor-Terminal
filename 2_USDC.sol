@@ -29,7 +29,7 @@ constructor () {
 
 // INVESTING LOGIC FLOW
     function USDCInvest(uint256 investment) public {
-        require (investedFundsUSDC + investment <= maxValueStables);
+        require (investedFundsUSDC + investment <= maxValueStables, "amount too high");
         address investor = msg.sender;
         fundsUSDC += investment;
         investedFundsUSDC += investment;
@@ -40,8 +40,8 @@ constructor () {
 
     function USDCcompound() public {
         address investor = msg.sender;
-        require(invest_USDC[investor] > 0);
-        require(investedFundsUSDC <= maxValueStables);
+        require(invest_USDC[investor] > 0, "no investment to compound");
+        require(investedFundsUSDC <= maxValueStables, "amount being compounded too high");
         dailyRateCalcUSDC(investor);
         timeofInvest_USDC[investor] = block.number;
         invest_USDC[investor] += investmentRewardsUSDC[investor];
@@ -50,7 +50,7 @@ constructor () {
 
     function USDCcollectProfit() public {
         address investor = msg.sender;
-        require(invest_USDC[investor] > 0);
+        require(invest_USDC[investor] > 0, "no investment to collect profits for");
         dailyRateCalcUSDC(investor);
         timeofInvest_USDC[investor] = block.number;
         fundsUSDC -= investmentRewardsUSDC[investor];
