@@ -3,8 +3,8 @@
 pragma solidity 0.8.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "contracts/AdminStatus.sol";
-import "contracts/BTC_and_ETH_Price.sol";
+import "contracts/3_AdminStatus.sol";
+import "contracts/4_PriceChecker.sol";
 
 /*
 INTENDED USAGE: This contract allows individuals to invest into a company and receive rewards after specified time intervals using USDC (could use any ERC20).
