@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.12;
 
-import "contracts/USDT_Stuff.sol";
+import "contracts/1_USDT.sol";
 
 /*
 INTENDED USAGE: This contract allows individuals to invest into a company and receive rewards after specified time intervals.
