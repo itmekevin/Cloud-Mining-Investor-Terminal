@@ -16,21 +16,23 @@ contract USDC_Stuff is AdminStatus, BTC_Oracle_Test {
     uint256 public maxValueStables = 50000000000;
     uint256 public fundsUSDC = 0;
     uint256 public investedFundsUSDC = 0;
+    uint256 public blocksPerDay = 6375;
+    uint256 public constant converter3 = 10000000000000000000;
 
     mapping(address => uint256) public invest_USDC;
     mapping(address => uint256) public timeofInvest_USDC;
-    mapping(address => uint256) public investmentRewardsUSDC; 
 
-    IERC20 public USDC;
+    IERC20 public immutable USDC;
 
 constructor () {
-    USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    USDC = IERC20(0x07865c6E87B9F70255377e024ace6630C1Eaa37F);
     }
 
 // INVESTING LOGIC FLOW
-    function USDCInvest(uint256 investment) public {
-        require (investedFundsUSDC + investment <= maxValueStables, "amount too high");
+    function USDCInvest(uint256 investment) external payable {
         address investor = msg.sender;
+        require (investedFundsUSDC + investment <= maxValueStables, "amount too high");
+        require (USDC.allowance(msg.sender, address(this)) > investment);
         fundsUSDC += investment;
         investedFundsUSDC += investment;
         invest_USDC[investor] += investment;
@@ -38,52 +40,59 @@ constructor () {
         USDC.transferFrom(investor, address(this), investment);
     }
 
-    function USDCcompound() public {
+    function USDCcompound() external {
         address investor = msg.sender;
         require(invest_USDC[investor] > 0, "no investment to compound");
         require(investedFundsUSDC <= maxValueStables, "amount being compounded too high");
-        dailyRateCalcUSDC(investor);
+        uint256 result = dailyRateCalcUSDC(investor);
         timeofInvest_USDC[investor] = block.number;
-        invest_USDC[investor] += investmentRewardsUSDC[investor];
-        investedFundsUSDC += investmentRewardsUSDC[investor];
+        invest_USDC[investor] += result;
+        investedFundsUSDC += result;
     }
 
-    function USDCcollectProfit() public {
+    function USDCcollectProfit() external {
         address investor = msg.sender;
         require(invest_USDC[investor] > 0, "no investment to collect profits for");
-        dailyRateCalcUSDC(investor);
-        timeofInvest_USDC[investor] = block.number;
-        fundsUSDC -= investmentRewardsUSDC[investor];
-        USDC.transfer(investor, investmentRewardsUSDC[investor]);
+        uint256 result = dailyRateCalcUSDC(investor);
+        if (fundsUSDC > result) {
+            timeofInvest_USDC[investor] = block.number;
+            fundsUSDC -= result;
+            USDC.transfer(investor, result);
+            } else {
+                revert();
+            }
     }
 
 // CALCULATE THE DAILY RATE HERE, THEN MULTIPLY IT BY DAYS INVESTED
-    function dailyRateCalcUSDC(address investor) internal {
-        uint256 dailyRate = uint256((((constant1_Stables*(uint(getLatestPriceBTC())))-constant2_Stables)*invest_USDC[investor])/10000000000000000000);
-        investmentRewardsUSDC[investor] = dailyRate * ((block.number - timeofInvest_USDC[investor])/6375);
+    function dailyRateCalcUSDC(address investor) internal view returns (uint256) {
+        uint256 dailyRate = uint256((((constant1_Stables*(uint(getLatestPriceBTC())))-constant2_Stables)*invest_USDC[investor])/converter3);
+        uint256 result = dailyRate * ((block.number - timeofInvest_USDC[investor])/blocksPerDay);
+        return result;
     }
 
 // SET CONSTANTS FOR dailyRateCalcUSDC
-    function setconstant1_Stables(uint256 changeconstant1_Stables) public onlyAdmin {
+    function setconstant1_Stables(uint256 changeconstant1_Stables) external onlyAdmin {
         constant1_Stables = changeconstant1_Stables;
     }
 
-    function setconstant2_Stables(uint256 changeconstant2_Stables) public onlyAdmin {
+    function setconstant2_Stables(uint256 changeconstant2_Stables) external onlyAdmin {
         constant2_Stables = changeconstant2_Stables;
     }
 
 // FUNCTIONS TO ALLOW OWNERSHIP TO ADD AND REMOVE FUNDS FROM THE CONTRACT BALANCE
-    function addLiquidityUSDC(uint256 liquidUSDC) public payable onlyAdmin {
-        fundsUSDC += liquidUSDC;
-        USDC.transferFrom(msg.sender, address(this), liquidUSDC);
+    function addLiquidityUSDC(uint256 liquidUSDC) external payable onlyAdmin {
+        require (USDC.allowance(msg.sender, address(this)) > liquidUSDC, "increase allowance");
+            fundsUSDC += liquidUSDC;
+            USDC.transferFrom(msg.sender, address(this), liquidUSDC);
     }
 
-    function takeFundsUSDC(address payable fundsDestination, uint256 liquidUSDC) public onlyAdmin {
+    function takeFundsUSDC(address fundsDestination, uint256 liquidUSDC) external onlyAdmin {
+        require (fundsDestination != address(0));
         fundsUSDC -= liquidUSDC;
         USDC.transfer(fundsDestination, liquidUSDC);
     }
 
-    function setMaxValueStables(uint256 newMaxValue) public onlyAdmin {
+    function setMaxValueStables(uint256 newMaxValue) external onlyAdmin {
         maxValueStables = newMaxValue;
     }
 }
