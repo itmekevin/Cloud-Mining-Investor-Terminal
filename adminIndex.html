@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Admin UI</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="navbar-top-fixed.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      main.container {
+        margin-top:  25px;
+      }
+
+      .account-info-form {
+        width: 100px;
+      }
+
+      .connect-button-form {
+        width: 182px;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="assets/brand/bootstrap-logo-white.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        Admin Portal
+    </a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Entitlement Admin
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#grantModal"href="#action1">Grant</a></li>
+            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#revokeModal" href="#action2">Revoke</a></li>
+        </ul>
+      </li>
+      </ul>
+      <form class="d-flex ms-auto">
+        <div class="account-info-form">
+          <span type="text" readonly class="form-control-plaintext navbar-text text-white" id="account-info"></span>
+        </div>
+        <div class="connect-button-form" style="width:182px">
+          <button id="enableEthereumButton" class="btn btn-success btn-block" type="submit">Connect to MetaMask</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<main class="container">    
+  <!-- <div class="p-5 mb-4 bg-light border rounded-3 shadow-sm">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Administration Portal</h1>
+      <p class="col-md-8 fs-4">Use the functions below to configure your smart contract.</p>
+    </div>
+  </div> -->
+
+<div class="row align-items-center">
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm">
+        <div class="card-header py-3">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-sm">
+                <colgroup>
+                  <col span="1" style="width: 80%;">
+                  <col span="1" style="width: 20%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>ETH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Funds Invested</td>
+                    <td id="totalFundsEth"></td>
+                  </tr>
+                  <tr>
+                    <td>Total Liquidity</td>
+                    <td id="totalLiquidityEth"></td>
+                  </tr>
+                  <tr>
+                    <td>Projected Total Profits (current funds invested x todays profit x 365 days)</td>
+                    <td id="totalProfitsEth"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped table-sm">
+                <colgroup>
+                  <col span="1" style="width: 80%;">
+                  <col span="1" style="width: 20%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>USDC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Funds Invested</td>
+                    <td id="totalFundsUsdc"></td>
+                  </tr>
+                  <tr>
+                    <td>Total Liquidity</td>
+                    <td id="totalLiquidityUsdc"></td>
+                  </tr>
+                  <tr>
+                    <td>Projected Total Profits (current funds invested x todays profit x 365 days)</td>
+                    <td id="totalProfitsUsdc"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped table-sm">
+                <colgroup>
+                  <col span="1" style="width: 80%;">
+                  <col span="1" style="width: 20%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>USDT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Funds Invested</td>
+                    <td id="totalFundsUsdt"></td>
+                  </tr>
+                  <tr>
+                    <td>Total Liquidity</td>
+                    <td id="totalLiquidityUsdt"></td>
+                  </tr>
+                  <tr>
+                    <td>Projected Total Profits (current funds invested x todays profit x 365 days)</td>
+                    <td id="totalProfitsUsdt"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row align-items-center">
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm">
+        <div class="card-header py-3">
+          <h4 class="">Ethereum</h4>
+        </div>
+        <div class="card-body">
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ethereumSetConst1Modal" class="w-100 btn btn-lg btn-primary mb-2">Set Constant 1</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ethereumSetConst2Modal" class="w-100 btn btn-lg btn-primary mb-2">Set Constant 2</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ethereumAddModal" class="w-100 btn btn-lg btn-primary mb-2">Add Funds</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ethereumTakeModal" class="w-100 btn btn-lg btn-primary mb-2">Take Funds</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ethereumMaxValueModal" class="w-100 btn btn-lg btn-primary">Set Max Value</button>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm">
+        <div class="card-header py-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <h4 class="">Stable Coins</h4>
+            </div>
+            <div class="col">
+              <button id="approveStable" type="button" class="btn btn-md btn-primary float-end">Approve</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <button type="button" data-bs-toggle="modal" data-bs-target="#stableSetConst1Modal" class="w-100 btn btn-lg btn-primary mb-2">Set Constant 1</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#stableSetConst2Modal" class="w-100 btn btn-lg btn-primary mb-2">Set Constant 2</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#stableAddModal" class="w-100 btn btn-lg btn-primary mb-2">Add Funds</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#stableTakeModal" class="w-100 btn btn-lg btn-primary mb-2">Take Funds</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#stableMaxValueModal" class="w-100 btn btn-lg btn-primary">Set Max Value</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ETH Modal -->
+<div class="modal fade" id="ethereumSetConst1Modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Ethereum - Set Const 1</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="constant1-eth" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="constant1Eth" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ethereumSetConst2Modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Ethereum - Set Const 2</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="constant2-eth" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="constant2Eth" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ethereumAddModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Ethereum - Add Funds</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="add-funds-eth" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="addFundsEth" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ethereumTakeModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Ethereum - Take Funds</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="remove-funds-eth" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <!-- <input id="remove-funds-address-eth" type="text" class="form-control" placeholder="Enter Address(optional)" aria-label="invest amount" aria-describedby="basic-addon2" > -->
+            <div class="input-group-append">
+              <button id="removeFundsEth" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Take</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ethereumMaxValueModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Ethereum - Set Max Value</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="max-value-eth" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="maxValueEth" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END Modal -->
+
+<!-- Stable Modal -->
+<div class="modal fade" id="stableSetConst1Modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Stable Coin - Set Const 1</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="constant1-stable" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="constant1Stable" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stableSetConst2Modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Stable Coin - Set Const 2</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="constant2-stable" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="constant2Stable" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stableAddModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Stable Coin - Add Funds</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="add-funds-usdc" type="text" class="form-control" placeholder="Add Funds USDC" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="addFundsUsdc" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Add</button>
+            </div>
+          </div>
+        </form>
+        <form>
+          <div class="input-group mb-3">
+            <input id="add-funds-usdt" type="text" class="form-control" placeholder="Add Funds USDT" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="addFundsUsdt" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stableTakeModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Stable Coin - Take Funds</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="remove-funds-usdc" type="text" class="form-control" placeholder="Take Funds USDC" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <!-- <input id="remove-funds-address-usdc" type="text" class="form-control" placeholder="Enter Address (optional)" aria-label="invest amount" aria-describedby="basic-addon2"> -->
+            <div class="input-group-append">
+              <button id="removeFundsUsdc" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Take</button>
+            </div>
+          </div>
+        </form>
+        <form>
+          <div class="input-group mb-3">
+            <input id="remove-funds-usdt" type="text" class="form-control" placeholder="Take Funds USDT" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <!-- <input id="remove-funds-address-usdt" type="text" class="form-control" placeholder="Enter Address (optional)" aria-label="invest amount" aria-describedby="basic-addon2"> -->
+            <div class="input-group-append">
+              <button id="removeFundsUsdt" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Take</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stableMaxValueModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Stable Coin - Set Max Value</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="max-value-stable" type="text" class="form-control" placeholder="Enter Amount" aria-label="invest amount" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="maxValueStable" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Set</button>
+            </div>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END Modal -->
+
+<div class="modal fade" id="grantModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Administration - Grant Privileges</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="grant-admin" type="text" class="form-control" placeholder="Enter Address" aria-label="admin address" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="grantAdmin" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Grant</button>
+            </div>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Administration - Revoke Privileges</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group mb-3">
+            <input id="revoke-admin" type="text" class="form-control" placeholder="Enter Address to revoke" aria-label="no admin address" aria-describedby="basic-addon2" required>
+            <div class="input-group-append">
+              <button id="revokeAdmin" class="btn btn-outline-secondary" type="submit" onclick="javascript:return false;">Revoke</button>
+            </div>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+      </a>
+      <span class="text-muted">© 2022 Company, Inc</span>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+      <li class="ms-3"><a class="text-muted" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16">
+  <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+</svg></a></li>
+      <li class="ms-3"><a class="text-muted" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+  <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
+</svg></a></li>
+      <li class="ms-3"><a class="text-muted" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+</svg></a></li>
+    </ul>
+  </footer>
+</main>
+
+    <script type="text/javascript" src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+    <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  </body>
+  
+    
+    <script type="text/javascript">
+      let currentAccount = null;
+      let web3;
+      let abi;
+      let usdcabi;
+      let usdtabi;
+
+      let usdcContract;
+      let usdtContract;
+      let contract;
+
+      let contractAddress = '0x65e41Ffb1f1a648580a629A82873332157C27469'; // Deployed contract address, this changes
+      let usdcContractAddress = '0xc2569dd7d0fd715B054fBf16E75B001E5c0C1115'; // static address for ERC20 stable coin
+      let usdtContractAddress = '0xf3e0d7bF58c5d455D31ef1c2d5375904dF525105'; // static address for ERC20 stable coin
+      let $account = $('#account-info');
+      let btcPrice;
+      let ethPrice;
+
+      $.getJSON("contracts/contractFinalTest.json", function(result) {
+        abi = result.abi;
+      });
+      $.getJSON("contracts/usdc.json", function(result) {
+        usdcabi = result.abi;
+      });
+      $.getJSON("contracts/usdc.json", function(result) {
+        usdtabi = result.abi;
+      });
+/////////////////////////////////////////////
+      $(document).ready(function() {
+        m = detectMetaMask();
+        if(m) {
+          connect(); 
+        } else {
+          // disable buttons in future
+        }
+
+        $('#enableMetamask').click(function() {
+            connect();
+        });
+
+        try {
+          web3 = new Web3(window.ethereum);
+        } catch (error) {
+          alert(error);
+        }            
+      });
+/////////////////////////////////////////////
+      $('#enableEthereumButton').on('click', () => {
+        connect();
+      });
+      $('#maxValueStable').on('click', () => {
+        setMaxValueStable();
+      });
+      $('#constant1Stable').on('click', () => {
+        setConstant1Stable();
+      });
+      $('#constant2Stable').on('click', () => {
+        setConstant2Stable();
+      });
+/////////////////////////////////////////////
+      $('#constant1Eth').on('click', () => {
+        setConstant1Eth();
+      });
+      $('#constant2Eth').on('click', () => {
+        setConstant2Eth();
+      });
+      $('#addFundsEth').on('click', () => {
+        addFundsEth();
+      });
+      $('#removeFundsEth').on('click', () => {
+        takeFundsEth();
+      });
+      $('#maxValueEth').on('click', () => {
+        setMaxValueETH();
+      });
+/////////////////////////////////////////////
+      $('#addFundsUsdc').on('click', () => {
+        addFundsUsdc();
+      });
+      $('#removeFundsUsdc').on('click', () => {
+        takeFundsUsdc();
+      });
+/////////////////////////////////////////////
+      $('#addFundsUsdt').on('click', () => {
+        addFundsUsdt();
+      });
+      $('#removeFundsUsdt').on('click', () => {
+        takeFundsUsdt();
+      });
+/////////////////////////////////////////////
+      $('#grantAdmin').on('click', () => {
+        grantAdmin();
+      });
+      $('#revokeAdmin').on('click', () => {
+        revokeAdmin();
+      });
+/////////////////////////////////////////////
+      $('#approveStable').on('click', () => {
+        approve();
+      });
+/////////////////////////////////////////////
+      async function setConstant1Eth() {
+        let amount = $('#constant1-eth').val();
+        validator(amount, "ethereumSetConst1");
+        contract.methods.setconstant1_ETH(amount).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function setConstant2Eth() {
+        let amount = $('#constant2-eth').val();
+        validator(amount, "ethereumSetConst2");
+        contract.methods.setconstant2_ETH(amount).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function addFundsEth() {
+        let amount = $('#add-funds-eth').val();
+        let weiAmount = web3.utils.toWei(amount.toString(), 'ether'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(amount, "ethereumAdd");
+        contract.methods.addLiquidityETH(bnAmount.toString()).send({from: currentAccount, value: bnAmount.toString()}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function takeFundsEth() {
+        let amount = $('#remove-funds-eth').val();
+        let optionalAddress = $('#remove-funds-address-eth').val();
+        let weiAmount = web3.utils.toWei(amount.toString(), 'ether'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(amount, "ethereumTake");
+        contract.methods.takefundsETH(currentAccount, bnAmount.toString()).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function setMaxValueETH() {
+        let amount = $('#max-value-eth').val();
+        let weiAmount = web3.utils.toWei(amount.toString(), 'ether'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(amount, "ethereumMaxValue");
+        contract.methods.setMaxValueETH(bnAmount.toString()).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+/////////////////////////////////////////////
+      async function addFundsUsdc() {
+        let usdcAmount = $('#add-funds-usdc').val();
+        let weiAmount = web3.utils.toWei(usdcAmount.toString(), 'mwei'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(usdcAmount, "stableAdd");
+        contract.methods.addLiquidityUSDC(bnAmount.toString()).send({from: currentAccount, value: bnAmount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function takeFundsUsdc() {
+        let usdcAmount = $('#remove-funds-usdc').val();
+        let optionalAddress = $('#remove-funds-address-usdc').val();
+        let weiAmount = web3.utils.toWei(usdcAmount.toString(), 'mwei'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(usdcAmount, "stableSetTake");
+        contract.methods.takeFundsUSDC(currentAccount, bnAmount.toString()).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+/////////////////////////////////////////////
+      async function addFundsUsdt() {
+        let usdtAmount = $('#add-funds-usdt').val();
+        let weiAmount = web3.utils.toWei(usdtAmount.toString(), 'mwei'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(usdtAmount, "stableAdd");
+        contract.methods.addLiquidityUSDT(bnAmount.toString()).send({from: currentAccount, value: bnAmount.toString()}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function takeFundsUsdt() {
+        let usdtAmount = $('#remove-funds-usdt').val();
+        let optionalAddress = $('#remove-funds-address-usdt').val();
+        let weiAmount = web3.utils.toWei(usdtAmount.toString(), 'mwei'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(usdtAmount, "stableTake");
+        contract.methods.takeFundsUSDT(currentAccount, bnAmount.toString()).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+/////////////////////////////////////////////
+      async function setMaxValueStable() {
+        let amount = $('#max-value-stable').val();
+        let weiAmount = web3.utils.toWei(amount.toString(), 'mwei'); //convert eth to wei 
+        let bnAmount = web3.utils.toBN(weiAmount.toString()); //convert wei to BN for sending to contract
+        validator(amount, "stableMaxValue");
+        contract.methods.setMaxValueStables(bnAmount.toString()).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function setConstant1Stable() {
+        let amount = $('#constant1-stable').val();
+        validator(amount, "stableSetConst1");
+        contract.methods.setconstant1_Stables(amount).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function setConstant2Stable() {
+        let amount = $('#constant2-stable').val();
+        validator(amount, "stableSetConst2");
+        contract.methods.setconstant2_Stables(amount).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+////////////////////////////////////////////
+      async function grantAdmin() {
+        let adminAddress = $('#grant-admin').val();
+        contract.methods.grantAdmin(adminAddress).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+
+      async function revokeAdmin() {
+        let adminAddress = $('#revoke-admin').val();
+        contract.methods.revokeAdmin(adminAddress).send({from: currentAccount}).then(function(result) {
+          console.log(result);
+        });
+      }
+////////////////////////////////////////////
+      function getUserData() {
+        let blocknum;
+
+        $.ajax({
+          url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+            btcPrice = res.bitcoin.usd;
+          },
+          error: function(error,msg) {
+            console.log(msg)
+          }
+        }); 
+
+        $.ajax({
+          url: "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+            ethPrice = res.ethereum.usd;
+          },
+          error: function(error,msg) {
+            console.log(msg)
+          }
+        }); 
+
+        let timestamp = Math.floor(Date.now() / 1000);
+        $.ajax({
+          url: "https://api-kovan.etherscan.io/api?module=block&action=getblocknobytime&timestamp="+timestamp+"&closest=before&apikey=ZH1UJQSHDNMSRFWH13CBKHA16RKSVK3MDR",
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+            console.log("blocknum "+res.result);
+            blocknum = res.result;
+          },
+          error: function(error,msg) {
+            console.log(msg)
+          }
+        });
+
+        setTimeout(() => {},2000);
+
+        let investedETH;
+        let liquidETH;
+        contract.methods.investedfundsETH().call(function(err, res){
+          investedETH = res
+        });
+        contract.methods.fundsETH().call(function(err, res){
+          liquidETH = res
+        });
+
+        let USDCinvested;
+        let liquidUSDC;
+        contract.methods.investedFundsUSDC().call(function(err, res){
+          USDCinvested = res;
+        });
+        contract.methods.fundsUSDC().call(function(err, res){
+          liquidUSDC = res;
+        });
+
+        contract.methods.investedFundsUSDT().call(function(err, res){
+          USDTinvested = res;
+        });
+        contract.methods.fundsUSDT().call(function(err, res){
+          liquidUSDT = res;
+        });
+
+        contract.methods.constant1_Stables().call(function(err, res){
+          constant1Stables = res
+        });
+        contract.methods.constant2_Stables().call(function(err, res){
+          constant2Stables = res
+        });
+        contract.methods.constant1_ETH().call(function(err, res){
+          constant1Eth = res
+        });
+        contract.methods.constant2_ETH().call(function(err, res){
+          constant2Eth = res
+        });
+      
+        setTimeout(() => {
+          let ETHguessProfits = (((constant1Eth * ((btcPrice/ethPrice)*1000000000000000000)) - constant2Eth) * investedETH)/1000000000000000000000000000
+          $('#totalFundsEth').html("&#926 "+ parseFloat(investedETH/1000000000000000000).toFixed(8));
+          $('#totalLiquidityEth').html("&#926 "+ parseFloat(liquidETH/1000000000000000000).toFixed(8));
+          $('#totalProfitsEth').html("&#926 "+ parseFloat(ETHguessProfits/1000000000000000000*365).toFixed(8));
+
+          let USDCguessProfits = ((constant1Stables * (btcPrice * 100000000) - constant2Stables) * USDCinvested)/10000000000000000000
+          $('#totalFundsUsdc').html("$ "+USDCinvested/1000000);
+          $('#totalLiquidityUsdc').html("$ "+liquidUSDC/1000000);
+          $('#totalProfitsUsdc').html("$ "+ parseFloat(USDCguessProfits/1000000*365).toFixed(4));
+
+          let USDTguessProfits = ((constant1Stables * (btcPrice * 100000000) - constant2Stables) * USDTinvested)/10000000000000000000
+          $('#totalFundsUsdt').html("$ "+USDTinvested);
+          $('#totalLiquidityUsdt').html("$ "+liquidUSDT);
+          $('#totalProfitsUsdt').html("$ "+ parseFloat(USDTguessProfits/1000000*365).toFixed(4));
+        }, 600)
+      }
+
+      function approve(token) {
+        console.log(token);
+        const maxAmount = web3.utils.toBN(2).pow(web3.utils.toBN(256)).sub(web3.utils.toBN(1));
+        if(token=='usdc') {
+          usdcContract.methods.approve(contractAddress, maxAmount).send({from: currentAccount}).then(function(result) {
+            console.log(result);
+          });
+        }else if(token=='usdt') {
+          usdtContract.methods.approve(contractAddress, maxAmount).send({from: currentAccount}).then(function(result) {
+            console.log(result);
+          });
+        } else {
+          usdcContract.methods.approve(contractAddress, maxAmount).send({from: currentAccount}).then(function(result) {
+            console.log(result);
+          });
+          usdtContract.methods.approve(contractAddress, maxAmount).send({from: currentAccount}).then(function(result) {
+            console.log(result);
+          });
+        }
+      }
+
+      function validator(target, token) {
+        if(target) {
+          let element = '#'+token+'Modal';
+          $(element).modal('hide');
+        }
+      }
+
+      function connect() {
+        console.log('Calling connect')
+        ethereum
+        .request({ method: 'eth_requestAccounts' })
+        .then(handleAccountsChanged)
+        .catch((err) => {
+          if (err.code === 4001) {
+              // EIP-1193 userRejectedRequest error
+              // If this happens, the user rejected the connection request.
+              alert('Your connection to Metamask was refused.');
+          } else {
+              console.error(err);
+          }
+        });
+      }
+
+      function handleAccountsChanged(accounts) {
+        console.log('Calling HandleChanged');
+        if (accounts.length === 0) {
+          console.log('Please connect to MetaMask.');
+          $('#exampleModalCenter').show();
+        } else if (accounts[0] !== currentAccount) {
+          currentAccount = accounts[0];
+          if(currentAccount != null) {
+            $account.html(currentAccount.substring(0,5) + '...' + currentAccount.substring(38,42));
+            contract = new web3.eth.Contract(abi, contractAddress);
+            usdcContract = new web3.eth.Contract(usdcabi, usdcContractAddress);
+            usdtContract = new web3.eth.Contract(usdtabi, usdtContractAddress);
+            getUserData();
+          } else {
+            alert('Not able to get account.');
+          }
+        }
+      }
+
+      function detectMetaMask() {
+        return typeof window.ethereum !== 'undefined' ? true : false;
+      }
+
+    </script>
+</html>
